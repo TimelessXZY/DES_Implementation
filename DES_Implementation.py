@@ -349,6 +349,7 @@ def move_left(key_left, key_right, round):
             temp_list = []
     return result, resultLeft, resultRight
 
+
 # This function is used to generate 16 sub keys after left-move operation
 def generate_subKeys(C_part, D_part):
     left, rigjt = C_part, D_part
@@ -360,3 +361,20 @@ def generate_subKeys(C_part, D_part):
         pc2_secretKey = PC2_substitute(left_secretKey)
         final_result.append(pc2_secretKey)
     return final_result
+
+
+# This function is the entire pipeline of generating keys
+def keys_generation_pipeline(key):
+    if len(key) > 8:
+        key = key[0:8]
+    # get key from users
+    secret_state, secret_key_binary = ASCII_to_BinaryMatrix(key)
+    # compress key
+    secret_key_binary = remove_lastColumn(secret_key_binary)
+    # PC1 substitution
+    secret_key_binary = PC1_substitute(secret_key_binary)
+    # split secret key into left and right parts
+    left_secretKey, right_secretKey = left_right_split(secret_key_binary)
+    # generate all the sub keys
+    subkey_collection = generate_subKeys(left_secretKey, right_secretKey)
+    return subkey_collection
