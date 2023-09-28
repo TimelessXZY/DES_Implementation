@@ -378,3 +378,142 @@ def keys_generation_pipeline(key):
     # generate all the sub keys
     subkey_collection = generate_subKeys(left_secretKey, right_secretKey)
     return subkey_collection
+
+
+# ----- Decryption functions -----
+# This function is used as initial permutation in decryption (reverse)
+def de_IP_substitute(iterated_result):
+    temps = {}
+    final_result, temp_str, resultList, tempList = [], "", [], []
+    for pointer in range(1, len(iterated_result) * len(iterated_result[0]) + 1):
+        cur_pos = IP[get_Location(pointer, 8)[0]][get_Location(pointer, 8)[1]]
+        temps[cur_pos] = iterated_result[get_Location(pointer, 8)[0]][get_Location(pointer, 8)[1]]
+    temps = sorted(temps.items(), key=lambda d: d[0])
+    for pointer in range(0, 64):
+        temp_str += str(temps[pointer][1])
+        tempList.append(temps[pointer][1])
+        if (pointer + 1) % 8 == 0:
+            final_result.append(temp_str)
+            resultList.append(tempList)
+            temp_str = ""
+            tempList = []
+    return final_result, resultList
+
+
+# This function is used for 16 iterations in decryption
+def de_iterations_16(left_part, right_part, sub_keys):
+    # initialize
+    l_data, r_data = left_part, right_part
+    final_result, temp_data = [], []
+    for pointer in range(1, 17):
+        l_temp, r_temp = l_data, r_data
+        r_data = l_temp
+        # E expansion
+        extended_left = E_Expansion(l_temp)
+        # xor operation
+        XORed_left = xor_right_key(extended_left, sub_keys[16 - pointer], pointer)
+        # S substitution
+        S_substituted = S_substitute(XORed_left)
+        # P substitution
+        l_data = P_substitute(S_substituted, r_temp, pointer)
+    for data_list in l_data:
+        temp_data.append(data_list)
+    for data_list in r_data:
+        temp_data.append(data_list)
+
+    temp = []
+    for pointer in range(1, len(temp_data) * len(temp_data[0]) + 1):
+        temp.append(temp_data[get_Location(pointer, 4)[0]][get_Location(pointer, 4)[1]])
+        if pointer % 8 == 0:
+            final_result.append(temp)
+            temp = []
+    return final_result
+
+
+# This function is used in decryption IP 1 substitution (inverse process with respect to encryption)
+def de_IP_1_substitute(iterated_result):
+    temps = {}
+    final_result, temp_str, resultList, tempList = [], "", [], []
+    for pointer in range(1, len(iterated_result) * len(iterated_result[0]) + 1):
+        cur_pos = IP_Inverse[get_Location(pointer, 8)[0]][get_Location(pointer, 8)[1]]
+        temps[cur_pos] = iterated_result[get_Location(pointer, 8)[0]][get_Location(pointer, 8)[1]]
+    temps = sorted(temps.items(), key=lambda d : d[0])
+    for pointer in range(0, 64):
+        temp_str += str(temps[pointer][1])
+        tempList.append(temps[pointer][1])
+        if (pointer + 1) % 8 == 0:
+            final_result.append(temp_str)
+            resultList.append(tempList)
+            temp_str = ""
+            tempList = []
+    return final_result, resultList
+
+
+# ----- Decryption & Encryption pipelines -----
+# This function is the entire encryption pipeline
+def Encryption_pipeline(plain_text, key):
+    # input plain text processing
+    processed_text_state, processed_text = ASCII_to_BinaryMatrix(plain_text)
+    # IP substitution
+    processed_text = initial_permutation(processed_text)
+    # split processed text into left and right parts
+    l_processed_text, r_processed_text = left_right_split(processed_text)
+    # generate sub keys
+    all_keys = keys_generation_pipeline(key)
+    # 16 iterations for processing plain text along with keys
+    iterated_text = iterations_16(l_processed_text, r_processed_text, all_keys)
+    # IP 1 substitution
+    resultList, result_binary_matrix = IP_1_substitute(iterated_text)
+    # get encrypted text
+    encrypted_text = Binary_to_Text(resultList)
+    # print results
+    print("--> Plain Text: ", plain_text)
+    print("--> Encrypted Plain Text: ", encrypted_text)
+    return encrypted_text
+
+
+# This function is the entire decryption pipeline
+def Decryption_pipeline(encrypted_text, key):
+    # input plain text processing
+    processed_text_state, processed_text = ASCII_to_BinaryMatrix(encrypted_text)
+    # IP 1 substitution (reverse processing)
+    resultList, result_binary = de_IP_1_substitute(processed_text)
+    # split processed text into left and right parts
+    de_r_processed_text, de_l_processed_text = left_right_split(result_binary)
+    # generate sub keys
+    all_keys = keys_generation_pipeline(key)
+    # 16 iterations for processing plain text along with keys (reverse processing)
+    iterated_text = de_iterations_16(de_l_processed_text, de_r_processed_text, all_keys)
+    # IP substitution
+    processed_resultList, processed_resultBinary = de_IP_substitute(iterated_text)
+    # get decrypted text
+    decrypted_text = Binary_to_Text(processed_resultList)
+    # print results
+    print("--> Encrypted Plain Text: ", encrypted_text)
+    print("--> Plain Text: ", decrypted_text)
+    return decrypted_text
+
+
+# ----- Complete Encryption & Decryption -----
+# This function is the complete encryption function, it is available for text more than 8 chars
+def Encryption(input_text, key):
+    final_text = ""
+    if len(input_text) <= 8:
+        final_text = Encryption_pipeline(input_text, key)
+    else:
+        splitted_text = break_text(input_text)
+        for pointer in range(0, len(splitted_text)):
+            final_text += Encryption_pipeline(splitted_text[pointer], key)
+    return final_text
+
+
+# This function is the complete decryption function, it is available for text more than 8 chars
+def Decryption(input_text, key):
+    final_text = ""
+    if len(input_text) <= 8:
+        final_text = Decryption_pipeline(input_text, key)
+    else:
+        splitted_text = break_text(input_text)
+        for pointer in range(0, len(splitted_text)):
+            final_text += Decryption_pipeline(splitted_text[pointer], key)
+    return final_text
