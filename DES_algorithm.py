@@ -227,6 +227,7 @@ def DES_pipeline(input_text, input_key, optionType):
     finalTextOfBit = [0 for i in range(64)]
     finalTextOfUnicode = [0 for i in range(4)]
 
+    # option type is 0, implements encryption
     if optionType == 0:
         # initial
         tempText = [0 for i in range(64)]
@@ -311,6 +312,8 @@ def DES_pipeline(input_text, input_key, optionType):
         finalTextOfChar = unicode_to_char(finalTextOfUnicode, len(finalTextOfUnicode))
 
         return finalTextOfChar
+
+    # option type is 1, implements decryption
     else:
         # initial
         tempText = [0 for i in range(64)]
