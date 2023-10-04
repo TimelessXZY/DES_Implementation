@@ -118,6 +118,7 @@ IP_Inverse = [
 ]
 
 
+# This function is used to convert char to unicode
 def char_to_unicode(input_text, length):
     output_text = []
     for i in range(length):
@@ -125,6 +126,7 @@ def char_to_unicode(input_text, length):
     return output_text
 
 
+# This function is used to convert unicode to bit
 def unicode_to_bit(input_text, length):
     output_bit = []
     for i in range(length * 16):
@@ -132,6 +134,7 @@ def unicode_to_bit(input_text, length):
     return output_bit
 
 
+# This function is used to convert byte to bit
 def byte_to_bit(input_text, length):
     output_bit = []
     for i in range(length * 8):
@@ -139,6 +142,7 @@ def byte_to_bit(input_text, length):
     return output_bit
 
 
+# This function is used to convert bit to unicode
 def bit_to_unicode(input_bit, length):
     output_bit = []
     recorder = 0
@@ -150,6 +154,7 @@ def bit_to_unicode(input_bit, length):
     return output_bit
 
 
+# This function is used to convert bit to byte
 def bit_to_byte(input_bit, length):
     output_bit = []
     recorder = 0
@@ -161,6 +166,7 @@ def bit_to_byte(input_bit, length):
     return output_bit
 
 
+# This function is used to convert unicode to char
 def unicode_to_char(source, length):
     output_text = ""
     for i in range(length):
@@ -168,6 +174,7 @@ def unicode_to_char(source, length):
     return output_text
 
 
+# This function is used for generating sub keys in iterations
 def generate_keys(input_keys):
     sub_keys = []
 
@@ -213,6 +220,7 @@ def generate_keys(input_keys):
     return sub_keys
 
 
+# This function organizes all the processes in encryption & decryption pipeline
 def DES_pipeline(input_text, input_key, optionType):
     keyResult = generate_keys(input_key)
     # store final text
@@ -250,7 +258,7 @@ def DES_pipeline(input_text, input_key, optionType):
                 extendR[j] = R[E[j] - 1]
 
             # get sub keys
-            keyi = [keyResult[j] for j in range( i *48, i* 48 + 48)]
+            keyi = [keyResult[j] for j in range(i * 48, i * 48 + 48)]
 
             # --------- xor operation --------
             XORResult = [0 for j in range(48)]
@@ -386,6 +394,8 @@ def DES_pipeline(input_text, input_key, optionType):
 
         return finalTextOfChar
 
+
+# higher-level interface of encryption
 def encryption(input_text, input_key, optionType):
     key_length = len(input_key)
     length = len(input_text)
@@ -399,6 +409,8 @@ def encryption(input_text, input_key, optionType):
         Result = "".join([Result, DES_pipeline(tempText, input_key, int(optionType))])
     return Result
 
+
+# higher-level interface of decryption
 def decryption(input_text, input_key, optionType):
     key_length = len(input_key)
     length = len(input_text)
@@ -411,6 +423,7 @@ def decryption(input_text, input_key, optionType):
     return Result
 
 
+# --------------- user interfaces -----------------
 class base():
     def __init__(self, master):
         # basic window setting
@@ -419,6 +432,7 @@ class base():
         self.root.title('DES Encryption & Decryption')
         self.root.geometry('600x600')
         DES_encryption(self.root)
+
 
 class DES_encryption():
     def __init__(self, master):
@@ -431,7 +445,8 @@ class DES_encryption():
         tk.Label(frame_0, text='DES', font=('Calibri', 16), bg='#DC143C').pack(side='left', pady=6)
         tk.Label(frame_0, text='Data Encryption', font=('Calibri', 16), bg="#e8ded2").pack(side='left', padx=6, pady=6)
 
-        btn_back = tk.Button(frame_0, text='TO DECRYPTION',font=('Calibri', 14), bg='#DC143C', command=self.change, pady=6)
+        btn_back = tk.Button(frame_0, text='TO DECRYPTION', font=('Calibri', 14), bg='#DC143C', command=self.change,
+                             pady=6)
         btn_back.pack()
         frame_0.pack(side='top')
 
@@ -442,18 +457,18 @@ class DES_encryption():
         tk.Label(frame_1_top, text='Plaintext', font=('Arial', 14), bg='#F0E68C', bd=2, relief='flat').pack(side='left')
 
         self.plaintext = tk.Text(frame_1_bottom,
-                font=('Arial', 12),
-                height=6,
-                bg='#89c9b8',
-                relief='solid',
-                bd=2,
-                width=40,
-                padx=1,
-                pady=1,
-                state='normal',
-                cursor='arrow',
-                wrap='char',
-                )
+                                 font=('Arial', 12),
+                                 height=6,
+                                 bg='#89c9b8',
+                                 relief='solid',
+                                 bd=2,
+                                 width=40,
+                                 padx=1,
+                                 pady=1,
+                                 state='normal',
+                                 cursor='arrow',
+                                 wrap='char',
+                                 )
         self.plaintext.pack()
 
         frame_1_top.pack(side='top')
@@ -468,14 +483,16 @@ class DES_encryption():
                                         "e8ded2"
                  ).pack(side='left', pady=10)
 
-        self.Key = tk.Entry(frame_2_top, bg='#ff8e6e', textvariable=keyVar , width=30, font=('Arial', 12), relief='solid',
-                 bd=2)
+        self.Key = tk.Entry(frame_2_top, bg='#ff8e6e', textvariable=keyVar, width=30, font=('Arial', 12),
+                            relief='solid',
+                            bd=2)
         self.Key.pack(side='left')
         frame_2_top.pack(side='top')
 
         # frame2
         frame_2 = tk.Frame(self.des, bg="#e8ded2")
-        tk.Button(frame_2, text='Encipher',command =self.encrypt, bg='#318fb5', width=10, font=('Arial', 14)).pack(side='bottom', padx=50, pady=10)
+        tk.Button(frame_2, text='Encipher', command=self.encrypt, bg='#318fb5', width=10, font=('Arial', 14)).pack(
+            side='bottom', padx=50, pady=10)
 
         frame_2.pack(side='top')
         frame_2.pack(side='top', expand='yes', pady=10)
@@ -488,24 +505,24 @@ class DES_encryption():
         frame_3_bottom = tk.Frame(frame_3, bg="#"
                                               "e8ded2")
         tk.Label(frame_3_top, text='Secret Text', font=('Arial', 14), bg="#F0E68C").pack(side='left')
-        self.secret= tk.Text(frame_3_bottom,
-                font=('Arial', 12),
-                height=6,
-                bg='#89c9b8',
-                fg='red',
-                relief='solid',
-                bd=2,
-                width=40,
-                padx=1,
-                pady=1,
-                state='normal',
-                cursor='arrow',
-                wrap='char',
-                )
+        self.secret = tk.Text(frame_3_bottom,
+                              font=('Arial', 12),
+                              height=6,
+                              bg='#89c9b8',
+                              fg='red',
+                              relief='solid',
+                              bd=2,
+                              width=40,
+                              padx=1,
+                              pady=1,
+                              state='normal',
+                              cursor='arrow',
+                              wrap='char',
+                              )
         self.secret.pack()
         frame_3_top.pack(side='top')
         frame_3_bottom.pack(side='bottom')
-        frame_3.pack(side='top', expand='yes', fill='x',pady=40)
+        frame_3.pack(side='top', expand='yes', fill='x', pady=40)
 
     def encrypt(self, ):
         self.secret.config(fg='red')
@@ -520,6 +537,7 @@ class DES_encryption():
         self.des.destroy()
         DES_decryption(self.master)
 
+
 class DES_decryption():
     def __init__(self, master):
         self.master = master
@@ -531,7 +549,8 @@ class DES_decryption():
         tk.Label(frame_0, text='DES', font=('Calibri', 16), bg='#DC143C').pack(side='left', pady=6)
         tk.Label(frame_0, text='Data Encryption', font=('Calibri', 16), bg="#e8ded2").pack(side='left', padx=6, pady=6)
 
-        btn_back = tk.Button(frame_0, text='TO ENCRYPTION',font=('Calibri', 14), bg='#DC143C', command=self.change, pady=6)
+        btn_back = tk.Button(frame_0, text='TO ENCRYPTION', font=('Calibri', 14), bg='#DC143C', command=self.change,
+                             pady=6)
         btn_back.pack()
         frame_0.pack(side='top')
 
@@ -539,21 +558,22 @@ class DES_decryption():
         frame_1 = tk.Frame(self.des, bg="#e8ded2")
         frame_1_top = tk.Frame(frame_1, bg="#e8ded2")
         frame_1_bottom = tk.Frame(frame_1, bg="#e8ded2")
-        tk.Label(frame_1_top, text='Secret Text', font=('Arial', 14), bg='#F0E68C', bd=2, relief='flat').pack(side='left')
+        tk.Label(frame_1_top, text='Secret Text', font=('Arial', 14), bg='#F0E68C', bd=2, relief='flat').pack(
+            side='left')
 
         self.plaintext = tk.Text(frame_1_bottom,
-                font=('Arial', 12),
-                height=6,
-                bg='#89c9b8',
-                relief='solid',
-                bd=2,
-                width=40,
-                padx=1,
-                pady=1,
-                state='normal',
-                cursor='arrow',
-                wrap='char',
-                )
+                                 font=('Arial', 12),
+                                 height=6,
+                                 bg='#89c9b8',
+                                 relief='solid',
+                                 bd=2,
+                                 width=40,
+                                 padx=1,
+                                 pady=1,
+                                 state='normal',
+                                 cursor='arrow',
+                                 wrap='char',
+                                 )
         self.plaintext.pack()
 
         frame_1_top.pack(side='top')
@@ -568,14 +588,16 @@ class DES_decryption():
                                         "e8ded2"
                  ).pack(side='left', pady=10)
 
-        self.Key = tk.Entry(frame_2_top, bg='#ff8e6e', textvariable=keyVar , width=30, font=('Arial', 12), relief='solid',
-                 bd=2)
+        self.Key = tk.Entry(frame_2_top, bg='#ff8e6e', textvariable=keyVar, width=30, font=('Arial', 12),
+                            relief='solid',
+                            bd=2)
         self.Key.pack(side='left')
         frame_2_top.pack(side='top')
 
         # frame2
         frame_2 = tk.Frame(self.des, bg="#e8ded2")
-        tk.Button(frame_2, text='Decipher',command =self.decrypt, bg='#318fb5', width=10, font=('Arial', 14)).pack(side='bottom', padx=50, pady=10)
+        tk.Button(frame_2, text='Decipher', command=self.decrypt, bg='#318fb5', width=10, font=('Arial', 14)).pack(
+            side='bottom', padx=50, pady=10)
 
         frame_2.pack(side='top')
         frame_2.pack(side='top', expand='yes', pady=10)
@@ -588,24 +610,24 @@ class DES_decryption():
         frame_3_bottom = tk.Frame(frame_3, bg="#"
                                               "e8ded2")
         tk.Label(frame_3_top, text='Plaintext', font=('Arial', 14), bg="#F0E68C").pack(side='left')
-        self.secret= tk.Text(frame_3_bottom,
-                font=('Arial', 12),
-                height=6,
-                bg='#89c9b8',
-                fg='red',
-                relief='solid',
-                bd=2,
-                width=40,
-                padx=1,
-                pady=1,
-                state='normal',
-                cursor='arrow',
-                wrap='char',
-                )
+        self.secret = tk.Text(frame_3_bottom,
+                              font=('Arial', 12),
+                              height=6,
+                              bg='#89c9b8',
+                              fg='red',
+                              relief='solid',
+                              bd=2,
+                              width=40,
+                              padx=1,
+                              pady=1,
+                              state='normal',
+                              cursor='arrow',
+                              wrap='char',
+                              )
         self.secret.pack()
         frame_3_top.pack(side='top')
         frame_3_bottom.pack(side='bottom')
-        frame_3.pack(side='top', expand='yes', fill='x',pady=40)
+        frame_3.pack(side='top', expand='yes', fill='x', pady=40)
 
     def decrypt(self, ):
         self.secret.config(fg='red')
@@ -622,63 +644,6 @@ class DES_decryption():
 
 
 if __name__ == '__main__':
-    # text = input("请输入要操作的文本:  ")
-    # # str0.join([str1,str2])
-    # print(" ".join(["输入的文本是：", text]))
-    # optionType = input("请选择是进行加密还是解密，加密输入0，解密输入1:  ")
-    # while (not (optionType == '0' or optionType == '1')):
-    #     print("Wrong!!!选择的操作类型只能是0或者是1")
-    #     optionType = input("请选择是进行加密还是解密，加密输入0，解密输入1:  ")
-    # length = len(text)
-    # Result = ""
-    # # print('optiontype',optionType)
-    # if optionType == '0':
-    #     # f=open('D:\encyptText.txt','w')
-    #
-    #     # 若输入文本的长度不是4的整数倍，
-    #     # 即不是64字节的整数倍，
-    #     # 用空格补全（此处为了加密中文，
-    #     # 用的是unicode编码，即用16字节表示一个字符
-    #
-    #     text = text + int(length % 4) * " "
-    #     length = len(text)
-    #     key = input("请输入8位加密密码: ")
-    #     while (len(key) != 8):
-    #         print("wrong!!请输入8位密码")
-    #         key = input("请输入8位加密密码: ")
-    #
-    #     print("加密后的文本：", end=" ")
-    #     # 字符每四个为一组
-    #     for i in range(int(length / 4)):
-    #         #    [text[j] for j in range()]
-    #         tempText = [text[j] for j in range(i * 4, i * 4 + 4)]
-    #         Result = "".join([Result, DES_pipeline(tempText, key, int(optionType))])
-    #     # f.write(Result)
-    #     print(Result)
-    #
-    # if optionType == '1':
-    #
-    #     # 若输入文本的长度不是8的整数倍，
-    #     # 即不是64字节的整数倍，
-    #     # 用空格补全（此处解密出来的密文用的是每8bit转换为一个ascii码，
-    #     # 所以生成的八位表示的字符）-------
-    #
-    #     # text = text+int(length%8)*" "
-    #     length = len(text)
-    #     key = input("请输入8位解密密码: ")
-    #     while (len(key) != 8):
-    #         print("wrong!!请输入8位密码")
-    #         key = input("请输入8位解密密码: ")
-    #
-    #     print("解密后的文本：", end=" ")
-    #     for i in range(int(length / 8)):
-    #         tempText = [text[j] for j in range(i * 8, i * 8 + 8)]
-    #         Result = "".join([Result, DES_pipeline(tempText, key, int(optionType))])
-    #     print(Result)
     root = tk.Tk()
     base(root)
     root.mainloop()
-
-
-    # YØC_µ»q¥ÀVßî¥UåÈ9ÞýE
-    # hihipipipsss
