@@ -202,24 +202,3 @@ if __name__ == "__main__":
     app = RSAGUI()
     app.mainloop()
 
-# if __name__ == '__main__':
-#     # bits = 10  # Key size, you can increase it for more security
-#     # message = "什么东西啊!"
-#     # encrypted_message, pbk, pvk = rsa_encrypt(message, bits)
-#     # print("Encrypted Message:", encrypted_message)
-#     # print("Public Key: ", pbk)
-#     # print("Private Key: ", pvk)
-#     # decrypted_message = rsa_decrypt(encrypted_message, pvk)
-#     # print("Decrypted Message:", decrypted_message)
-#
-#     upper = 100  # Key size, you can increase it for more security
-#     message = "sorry no!"
-#     pbk, pvk = generate_rsa_keys(upper)
-#     encrypted_message = encrypt(message, pbk)
-#     print("Encrypted Message:", encrypted_message)
-#     print("Public Key: ", pbk)
-#     print("Private Key: ", pvk)
-#     decrypted_message = decrypt(encrypted_message, pvk)
-#     print("Decrypted Message:", decrypted_message)
-
-
