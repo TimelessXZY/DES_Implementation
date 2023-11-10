@@ -1,4 +1,6 @@
 import tkinter as tk
+import time
+from tkinter import messagebox
 
 # ip table used for initial permutation
 IP = [
@@ -444,6 +446,8 @@ class DES_encryption():
         self.des = tk.Frame(self.master, bg="#e8ded2")
         self.des.pack()
 
+        self.plainText_length = None
+
         frame_0 = tk.Frame(self.des, bg="#e8ded2")
         tk.Label(frame_0, text='DES', font=('Calibri', 16), bg='#DC143C').pack(side='left', pady=6)
         tk.Label(frame_0, text='Data Encryption', font=('Calibri', 16), bg="#e8ded2").pack(side='left', padx=6, pady=6)
@@ -528,13 +532,19 @@ class DES_encryption():
         frame_3.pack(side='top', expand='yes', fill='x', pady=40)
 
     def encrypt(self, ):
+        start_time = time.process_time()
         self.secret.config(fg='red')
         self.plaintext.config(fg='black')
         text = self.plaintext.get('0.0', 'end').strip()
+        self.plainText_length = len(text)
         key = self.Key.get().strip()
         result = encryption(input_text=text, input_key=key, optionType=0)
+        end_time = time.process_time()
         self.secret.delete('1.0', 'end')
         self.secret.insert('end', result)
+        messagebox.showinfo(message='Encoded successfully!\n'
+                                    '{}s spent.'.format(end_time - start_time))
+        print("The length ", self.plainText_length, " of text are encrypted spending ", end_time - start_time)
 
     def change(self, ):
         self.des.destroy()
@@ -633,13 +643,18 @@ class DES_decryption():
         frame_3.pack(side='top', expand='yes', fill='x', pady=40)
 
     def decrypt(self, ):
+        start_time = time.process_time()
         self.secret.config(fg='red')
         self.plaintext.config(fg='black')
         text = self.plaintext.get('0.0', 'end').strip()
         key = self.Key.get().strip()
         result = decryption(input_text=text, input_key=key, optionType=1)
+        end_time = time.process_time()
         self.secret.delete('1.0', 'end')
         self.secret.insert('end', result)
+        messagebox.showinfo(message='Decoded successfully!\n'
+                                    '{}s spent.'.format(end_time - start_time))
+        print("The text are decrypted spending ", end_time - start_time)
 
     def change(self):
         self.des.destroy()

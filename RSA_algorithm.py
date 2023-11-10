@@ -3,6 +3,8 @@ import random
 import tkinter as tk
 import binascii
 import re
+import time
+from tkinter import messagebox
 
 
 # ===================== Tool Functions =====================
@@ -95,38 +97,129 @@ def encrypt(plain_text, public_key):
     return encrypted_message
 
 
-def decrypt(encrypted_text, private_key):
+def decrypt(encrypted_text, input_private, private_key):
     decrypted_text = ''
     encrypted_chunks = re.findall(r'.{4}', encrypted_text)
 
-    for chunk in encrypted_chunks:
-        tex = int(chunk)
-        decrypted_chunk = str(pow(tex, private_key[0]) % private_key[1]).zfill(4)
-        decrypted_text += decrypted_chunk
-        decrypted_text += ' '
-
-    decrypted_text = change_to_str(decrypted_text)
+    if input_private[0] == private_key[0] and input_private[1] == private_key[1]:
+        for chunk in encrypted_chunks:
+            tex = int(chunk)
+            decrypted_chunk = str(pow(tex, input_private[0]) % input_private[1]).zfill(4)
+            decrypted_text += decrypted_chunk
+            decrypted_text += ' '
+        decrypted_text = change_to_str(decrypted_text)
+    else:
+        decrypted_text = 1 / 0
     return decrypted_text
 
 
-if __name__ == '__main__':
-    # bits = 10  # Key size, you can increase it for more security
-    # message = "什么东西啊!"
-    # encrypted_message, pbk, pvk = rsa_encrypt(message, bits)
-    # print("Encrypted Message:", encrypted_message)
-    # print("Public Key: ", pbk)
-    # print("Private Key: ", pvk)
-    # decrypted_message = rsa_decrypt(encrypted_message, pvk)
-    # print("Decrypted Message:", decrypted_message)
+# GUI Application
+class RSAGUI(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("RSA Encryption and Decryption")
+        self.geometry("800x600")
+        self.setup_ui()
 
-    upper = 100  # Key size, you can increase it for more security
-    message = "sorry no!"
-    pbk, pvk = generate_rsa_keys(upper)
-    encrypted_message = encrypt(message, pbk)
-    print("Encrypted Message:", encrypted_message)
-    print("Public Key: ", pbk)
-    print("Private Key: ", pvk)
-    decrypted_message = decrypt(encrypted_message, pvk)
-    print("Decrypted Message:", decrypted_message)
+        self.correct_pbk = None
+        self.correct_pvk = None
+        self.plainText_length = None
+
+    def setup_ui(self):
+        # Text Entry
+        self.label1 = tk.Label(self, text="Enter Plain Text:")
+        self.label1.pack()
+        self.text_entry = tk.Entry(self, width=50)
+        self.text_entry.pack()
+        # Encrypt Button
+        self.encrypt_button = tk.Button(self, text="Encrypt", command=self.encrypt_text)
+        self.encrypt_button.pack()
+        # output encrypted text and private key
+        self.output_label2 = tk.Label(self, text="Encrypted Text:")
+        self.output_label2.pack()
+        self.text_entry4 = tk.Entry(self, width=50)
+        self.text_entry4.pack()
+        self.output_label = tk.Label(self, text="Private Key:")
+        self.output_label.pack()
+        self.text_entry3 = tk.Entry(self, width=50)
+        self.text_entry3.pack()
+        # enter encrypted text
+        self.label3 = tk.Label(self, text="Enter Encrypted Text:", font=('Arial', 14), bg="#e8ded2")
+        self.label3.pack()
+        self.text_entry6 = tk.Entry(self, width=50)
+        self.text_entry6.pack()
+        # enter private key
+        self.label2 = tk.Label(self, text="Enter Private Key:", font=('Arial', 14), bg="#e8ded2")
+        self.label2.pack()
+        self.text_entry2 = tk.Entry(self, width=50)
+        self.text_entry2.pack()
+        # Decrypt Button
+        self.decrypt_button = tk.Button(self, text="Decrypt", command=self.decrypt_text)
+        self.decrypt_button.pack()
+        # Output Label
+        self.output_label3 = tk.Label(self, text="Decrypted Text:", font=('Arial', 14), bg="#e8ded2")
+        self.output_label3.pack()
+        self.text_entry5 = tk.Entry(self, width=50)
+        self.text_entry5.pack()
+
+    def encrypt_text(self):
+        plain_text = self.text_entry.get()
+        self.plainText_length = len(plain_text)
+        if plain_text:
+            start_time = time.process_time()
+            upper = 100
+            public_key, private_key = generate_rsa_keys(upper)
+            encrypted_text = encrypt(plain_text, public_key)
+            end_time = time.process_time()
+            self.text_entry4.insert('end', encrypted_text)
+            self.text_entry3.insert('end', private_key)
+            self.correct_pbk = public_key
+            self.correct_pvk = private_key
+            messagebox.showinfo(message='Encoded successfully!\n'
+                                '{}s spent.'.format(end_time - start_time))
+            print("The length ", self.plainText_length, " of text are encrypted spending ", end_time - start_time)
+        else:
+            messagebox.showerror("Error", "Please enter text to encrypt.")
+
+    def decrypt_text(self):
+        encrypted_text = self.text_entry6.get()
+        input_key = self.text_entry2.get()
+        if encrypted_text:
+            start_time = time.process_time()
+            input_key= input_key.split()
+            input_key = (int(input_key[0]), int(input_key[1]))
+            decrypted_text = decrypt(encrypted_text, input_key, self.correct_pvk)
+            end_time = time.process_time()
+            self.text_entry5.insert('end', decrypted_text)
+            messagebox.showinfo(message='Decoded successfully!\n'
+                                        '{}s spent.'.format(end_time - start_time))
+            print("The length ", self.plainText_length, " of text are decrypted spending ", end_time - start_time)
+        else:
+            messagebox.showerror("Error", "Please enter text to decrypt.")
+
+
+if __name__ == "__main__":
+    app = RSAGUI()
+    app.mainloop()
+
+# if __name__ == '__main__':
+#     # bits = 10  # Key size, you can increase it for more security
+#     # message = "什么东西啊!"
+#     # encrypted_message, pbk, pvk = rsa_encrypt(message, bits)
+#     # print("Encrypted Message:", encrypted_message)
+#     # print("Public Key: ", pbk)
+#     # print("Private Key: ", pvk)
+#     # decrypted_message = rsa_decrypt(encrypted_message, pvk)
+#     # print("Decrypted Message:", decrypted_message)
+#
+#     upper = 100  # Key size, you can increase it for more security
+#     message = "sorry no!"
+#     pbk, pvk = generate_rsa_keys(upper)
+#     encrypted_message = encrypt(message, pbk)
+#     print("Encrypted Message:", encrypted_message)
+#     print("Public Key: ", pbk)
+#     print("Private Key: ", pvk)
+#     decrypted_message = decrypt(encrypted_message, pvk)
+#     print("Decrypted Message:", decrypted_message)
 
 
