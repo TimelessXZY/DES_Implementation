@@ -72,7 +72,7 @@ class CopmareGUI(tk.Tk):
             end_time = time.process_time()
             self.correct_pbk = public_key
             self.correct_pvk = private_key
-            messagebox.showinfo(message='Encoded successfully!\n'
+            messagebox.showinfo(message='RSA Encoded successfully!\n'
                                         '{}s spent.'.format(end_time - start_time))
             print("The length ", self.plainText_length, " of text are encrypted spending ", end_time - start_time)
             self.text_entry4.delete(0, END)
@@ -93,7 +93,7 @@ class CopmareGUI(tk.Tk):
             end_time = time.process_time()
             self.text_entry4.delete(0, END)
             self.text_entry4.insert('end', decrypted_text)
-            messagebox.showinfo(message='Decoded successfully!\n'
+            messagebox.showinfo(message='RSA Decoded successfully!\n'
                                         '{}s spent.'.format(end_time - start_time))
             print("The length ", self.plainText_length, " of text are decrypted spending ", end_time - start_time)
         else:
@@ -108,7 +108,7 @@ class CopmareGUI(tk.Tk):
         end_time = time.process_time()
         self.text_entry6.delete(0, END)
         self.text_entry6.insert('end', result)
-        messagebox.showinfo(message='Encoded successfully!\n'
+        messagebox.showinfo(message='DES Encoded successfully!\n'
                                     '{}s spent.'.format(end_time - start_time))
         print("The length ", self.plainText_length, " of text are encrypted spending ", end_time - start_time)
 
@@ -121,7 +121,7 @@ class CopmareGUI(tk.Tk):
         end_time = time.process_time()
         self.text_entry6.delete(0, END)
         self.text_entry6.insert('end', result)
-        messagebox.showinfo(message='Decoded successfully!\n'
+        messagebox.showinfo(message='DES Decoded successfully!\n'
                                     '{}s spent.'.format(end_time - start_time))
         print("The text are decrypted spending ", end_time - start_time)
 
